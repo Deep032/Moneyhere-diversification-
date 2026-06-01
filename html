@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Am I Diversified? — Moneyhere</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f5f2ec;
+  --ink:#0d0d0d;
+  --ink2:#3a3a3a;
+  --ink3:#7a7a7a;
+  --surface:#fff;
+  --border:#e0dbd2;
+  --border2:#c8c2b8;
+  --accent:#e8401c;
+  --accent2:#1c6be8;
+  --green:#1a9c5b;
+  --yellow:#e8a81c;
+  --red:#e8401c;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Outfit',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Texture overlay */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:999;
+  opacity:0.6;
+}
+
+/* Big background text */
+.bg-word{
+  position:fixed;
+  font-family:var(--font-display);
+  font-size:clamp(120px,20vw,280px);
+  color:rgba(0,0,0,0.03);
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;
+  pointer-events:none;
+  z-index:0;
+  letter-spacing:0.02em;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:860px;
+  margin:0 auto;
+  padding:0 24px 80px;
+}
+
+/* Header */
+header{
+  padding:40px 0 36px;
+  border-bottom:2px solid var(--ink);
+  margin-bottom:48px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo-mark{
+  width:42px;height:42px;
+  background:var(--ink);
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);
+  font-size:20px;
+  color:var(--bg);
+  letter-spacing:1px;
+}
+
+.logo-text{
+  font-family:var(--font-display);
+  font-size:22px;
+  letter-spacing:2px;
+  color:var(--ink);
+}
+
+.header-tag{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--ink3);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  border:1px solid var(--border2);
+  padding:4px 10px;
+  border-radius:3px;
+}
+
+/* Hero */
+.hero{
+  margin-bottom:48px;
+}
+
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(52px,10vw,96px);
+  line-height:0.92;
+  letter-spacing:0.01em;
+  margin-bottom:16px;
+}
+
+.hero h1 span{color:var(--accent);}
+
+.hero p{
+  font-size:16px;
+  color:var(--ink2);
+  max-width:520px;
+  line-height:1.6;
+  font-weight:300;
+}
+
+/* Tabs */
+.tabs{
+  display:flex;
+  gap:0;
+  border:1.5px solid var(--ink);
+  border-radius:6px;
+  overflow:hidden;
+  width:fit-content;
+  margin-bottom:28px;
+}
+
+.tab{
+  padding:10px 24px;
+  font-family:var(--font-mono);
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  background:transparent;
+  border:none;
+  color:var(--ink3);
+  transition:all 0.15s;
+  letter-spacing:0.5px;
+}
+
+.tab.active{
+  background:var(--ink);
+  color:var(--bg);
+}
+
+.tab:not(.active):hover{background:rgba(0,0,0,0.05);}
+
+/* Input sections */
+.input-section{display:none;}
+.input-section.show{display:block;}
+
+/* Form input */
+.field-group{
+  display:grid;
+  grid-template-columns:1fr 1fr 110px 36px;
+  gap:10px;
+  margin-bottom:10px;
+  align-items:end;
+}
+
+.field-group.header-row{
+  margin-bottom:6px;
+}
+
+.field-group.header-row span{
+  font-family:var(--font-mono);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  color:var(--ink3);
+}
+
+input,select,textarea{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:5px;
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--ink);
+  padding:10px 12px;
+  width:100%;
+  outline:none;
+  transition:border-color 0.15s;
+  appearance:none;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:var(--ink);
+}
+
+input::placeholder,textarea::placeholder{color:var(--ink3);}
+select option{background:var(--surface);}
+
+textarea{
+  resize:vertical;
+  min-height:120px;
+  line-height:1.6;
+  font-size:12px;
+}
+
+.del-btn{
+  width:36px;height:36px;
+  background:transparent;
+  border:1.5px solid var(--border);
+  border-radius:5px;
+  color:var(--red);
+  cursor:pointer;
+  font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+
+.del-btn:hover{background:#fff0ee;border-color:var(--red);}
+
+.add-row-btn{
+  background:transparent;
+  border:1.5px dashed var(--border2);
+  border-radius:5px;
+  color:var(--ink2);
+  font-family:var(--font-body);
+  font-size:13px;
+  padding:10px;
+  cursor:pointer;
+  width:100%;
+  margin-top:6px;
+  transition:all 0.15s;
+}
+
+.add-row-btn:hover{border-color:var(--ink);color:var(--ink);}
+
+/* Allocation bar */
+.alloc-wrap{margin:16px 0 24px;}
+.alloc-track{
+  height:6px;
+  background:var(--border);
+  border-radius:3px;
+  overflow:hidden;
+  display:flex;
+  margin-bottom:8px;
+}
+.alloc-seg{height:100%;transition:width 0.3s ease;}
+.alloc-row{
+  display:flex;justify-content:space-between;
+  font-family:var(--font-mono);font-size:11px;color:var(--ink3);
+}
+.alloc-total{font-weight:500;}
+.alloc-total.ok{color:var(--green);}
+.alloc-total.over{color:var(--red);}
+.alloc-total.under{color:var(--yellow);}
+
+/* Paste help */
+.paste-help{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:6px;
+  padding:14px 16px;
+  margin-bottom:14px;
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--ink3);
+  line-height:1.8;
+}
+
+.paste-help strong{color:var(--ink);font-weight:500;}
+
+.paste-examples{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;
+}
+
+.paste-ex{
+  background:var(--bg);
+  border:1px solid var(--border2);
+  border-radius:4px;
+  padding:4px 10px;
+  font-size:10px;
+  cursor:pointer;
+  transition:all 0.15s;
+  color:var(--ink2);
+}
+
+.paste-ex:hover{background:var(--ink);color:var(--bg);}
+
+/* Analyse button */
+.btn-analyse{
+  background:var(--ink);
+  border:none;
+  border-radius:6px;
+  color:var(--bg);
+  font-family:var(--font-display);
+  font-size:22px;
+  letter-spacing:2px;
+  padding:16px 40px;
+  cursor:pointer;
+  width:100%;
+  transition:all 0.15s;
+  margin-top:8px;
+}
+
+.btn-analyse:hover{background:var(--accent);transform:translateY(-1px);}
+.btn-analyse:active{transform:translateY(0);}
+.btn-analyse:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+
+/* ===== RESULTS ===== */
+#results{display:none;}
+#results.show{display:block;animation:fadeUp 0.5s ease;}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.results-divider{
+  border:none;
+  border-top:2px solid var(--ink);
+  margin:48px 0 40px;
+}
+
+/* Score */
+.score-section{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:32px;
+  align-items:center;
+  margin-bottom:48px;
+}
+
+.score-ring-wrap{
+  position:relative;
+  width:140px;height:140px;
+  flex-shrink:0;
+}
+
+.score-ring-wrap svg{
+  width:100%;height:100%;
+  transform:rotate(-90deg);
+}
+
+.score-number{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.score-num{
+  font-family:var(--font-display);
+  font-size:44px;
+  line-height:1;
+  letter-spacing:1px;
+}
+
+.score-label{
+  font-family:var(--font-mono);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--ink3);
+  margin-top:2px;
+}
+
+.score-text h2{
+  font-family:var(--font-display);
+  font-size:32px;
+  letter-spacing:1px;
+  margin-bottom:8px;
+  line-height:1;
+}
+
+.score-text p{
+  font-size:15px;
+  color:var(--ink2);
+  line-height:1.6;
+  font-weight:300;
+  max-width:480px;
+}
+
+/* Risk tags */
+.risk-tags{
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.risk-tag{
+  font-family:var(--font-mono);
+  font-size:10px;
+  padding:4px 10px;
+  border-radius:3px;
+  font-weight:500;
+  letter-spacing:0.3px;
+}
+
+.risk-tag.red{background:#ffeae6;color:var(--red);border:1px solid #f5c4bb;}
+.risk-tag.yellow{background:#fef8e7;color:#a06b00;border:1px solid #f0d98a;}
+.risk-tag.green{background:#e6f7ef;color:var(--green);border:1px solid #a8dfc0;}
+
+/* Section headers */
+.section-head{
+  font-family:var(--font-display);
+  font-size:28px;
+  letter-spacing:1px;
+  margin-bottom:6px;
+}
+
+.section-sub{
+  font-size:13px;
+  color:var(--ink3);
+  font-family:var(--font-mono);
+  margin-bottom:24px;
+}
+
+/* Heatmap */
+.heatmap-wrap{
+  overflow-x:auto;
+  margin-bottom:48px;
+}
+
+.heatmap-table{
+  border-collapse:collapse;
+  width:100%;
+  min-width:400px;
+}
+
+.heatmap-table th{
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
+  padding:6px 4px;
+  text-align:center;
+  color:var(--ink2);
+  white-space:nowrap;
+  max-width:70px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.heatmap-table th.row-head{
+  text-align:right;
+  padding-right:12px;
+  max-width:120px;
+}
+
+.heatmap-table td{
+  width:52px;height:52px;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:11px;
+  font-weight:500;
+  border:2px solid var(--bg);
+  border-radius:3px;
+  cursor:default;
+  transition:transform 0.1s;
+  position:relative;
+}
+
+.heatmap-table td:hover{transform:scale(1.15);z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+
+.heatmap-table td.row-label{
+  text-align:right;
+  padding-right:12px;
+  font-size:11px;
+  background:transparent !important;
+  color:var(--ink2);
+  width:auto;
+  cursor:default;
+  white-space:nowrap;
+}
+
+.heatmap-table td.row-label:hover{transform:none;box-shadow:none;}
+
+/* Legend */
+.heatmap-legend{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:12px;
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--ink3);
+}
+
+.legend-grad{
+  width:160px;height:8px;
+  border-radius:4px;
+  background:linear-gradient(90deg,#1a9c5b,#f5f2ec,#e8401c);
+  border:1px solid var(--border);
+}
+
+/* Bucket analysis */
+.buckets{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin-bottom:48px;
+}
+
+.bucket-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+}
+
+.bucket-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+}
+
+.bucket-card.high-corr::before{background:var(--red);}
+.bucket-card.med-corr::before{background:var(--yellow);}
+.bucket-card.low-corr::before{background:var(--green);}
+
+.bucket-title{
+  font-family:var(--font-display);
+  font-size:18px;
+  letter-spacing:0.5px;
+  margin-bottom:4px;
+}
+
+.bucket-count{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--ink3);
+  margin-bottom:12px;
+}
+
+.bucket-items{
+  display:flex;flex-direction:column;gap:6px;
+}
+
+.bucket-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--ink2);
+}
+
+.bucket-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+
+/* Insight cards */
+.insights{
+  display:flex;flex-direction:column;gap:12px;
+  margin-bottom:48px;
+}
+
+.insight-card{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:16px 18px;
+}
+
+.insight-icon{
+  width:36px;height:36px;
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.insight-card.bad .insight-icon{background:#ffeae6;}
+.insight-card.warn .insight-icon{background:#fef8e7;}
+.insight-card.good .insight-icon{background:#e6f7ef;}
+
+.insight-card.bad{border-left:3px solid var(--red);}
+.insight-card.warn{border-left:3px solid var(--yellow);}
+.insight-card.good{border-left:3px solid var(--green);}
+
+.insight-text strong{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:3px;
+  color:var(--ink);
+}
+
+.insight-text p{
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.5;
+  font-weight:300;
+}
+
+/* Diversification bars */
+.div-bars{
+  margin-bottom:48px;
+}
+
+.div-bar-row{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
+}
+
+.div-bar-label{
+  font-family:var(--font-mono);
+  font-size:11px;color:var(--ink2);
+  width:140px;flex-shrink:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+.div-bar-track{
+  flex:1;height:24px;
+  background:var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  position:relative;
+}
+
+.div-bar-fill{
+  height:100%;
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:8px;
+  font-family:var(--font-mono);font-size:10px;font-weight:500;
+  color:#fff;
+  transition:width 0.8s cubic-bezier(0.16,1,0.3,1);
+  min-width:40px;
+}
+
+/* Reset */
+.btn-reset{
+  background:transparent;
+  border:1.5px solid var(--border2);
+  border-radius:5px;
+  color:var(--ink3);
+  font-family:var(--font-body);
+  font-size:13px;
+  padding:10px 20px;
+  cursor:pointer;
+  transition:all 0.15s;
+  margin-top:8px;
+}
+
+.btn-reset:hover{border-color:var(--ink);color:var(--ink);}
+
+/* Disclaimer */
+.disclaimer{
+  margin-top:32px;
+  padding:14px 16px;
+  border:1.5px solid var(--border);
+  border-radius:6px;
+  font-size:11px;
+  color:var(--ink3);
+  line-height:1.6;
+  font-family:var(--font-mono);
+}
+
+@media(max-width:600px){
+  .score-section{grid-template-columns:1fr;gap:20px;}
+  .score-ring-wrap{width:100px;height:100px;}
+  .score-num{font-size:32px;}
+  .field-group{grid-template-columns:1fr 1fr;}
+  .field-group .del-btn{display:none;}
+  .hero h1{font-size:52px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-word">DIVERSIFIED?</div>
+
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">M$</div>
+      <div class="logo-text">MONEYHERE</div>
+    </div>
+    <div class="header-tag">Portfolio Analyser</div>
+  </header>
+
+  <div class="hero">
+    <h1>AM I<br><span>DIVERSIFIED?</span></h1>
+    <p>Find out if your portfolio is truly spread across uncorrelated assets — or if you're holding the same bet ten different ways.</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('form')">ENTER ONE BY ONE</button>
+    <button class="tab" onclick="switchTab('paste')">PASTE A LIST</button>
+  </div>
+
+  <!-- Form input -->
+  <div class="input-section show" id="section-form">
+    <div class="field-group header-row">
+      <span>Ticker / Name</span>
+      <span>Asset Class</span>
+      <span>Allocation %</span>
+      <span></span>
+    </div>
+    <div id="form-rows"></div>
+    <button class="add-row-btn" onclick="addRow()">+ Add holding</button>
+
+    <div class="alloc-wrap">
+      <div class="alloc-track" id="alloc-track"></div>
+      <div class="alloc-row">
+        <span id="alloc-labels" style="font-size:10px;color:var(--ink3)"></span>
+        <span class="alloc-total" id="alloc-total">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paste input -->
+  <div class="input-section" id="section-paste">
+    <div class="paste-help">
+      <strong>Format:</strong> One holding per line — ticker/name, asset class, allocation %<br>
+      <strong>Example:</strong> AAPL, US Equities, 25<br>
+      <strong>Or just:</strong> AAPL 25% — and we'll auto-classify it<br><br>
+      Try a sample portfolio:
+      <div class="paste-examples">
+        <div class="paste-ex" onclick="loadSample('tech')">Tech Heavy</div>
+        <div class="paste-ex" onclick="loadSample('balanced')">Balanced 60/40</div>
+        <div class="paste-ex" onclick="loadSample('crypto')">Crypto Focus</div>
+        <div class="paste-ex" onclick="loadSample('global')">Global Diversified</div>
+      </div>
+    </div>
+    <textarea id="paste-input" placeholder="AAPL, US Equities, 30&#10;NVDA, US Equities, 20&#10;BTC, Crypto, 15&#10;Gold, Commodities, 10&#10;BND, Bonds, 25" oninput="parsePaste()"></textarea>
+    <div style="margin-top:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink3)" id="paste-status"></div>
+  </div>
+
+  <button class="btn-analyse" id="analyse-btn" onclick="runAnalysis()" disabled>ANALYSE MY PORTFOLIO →</button>
+
+  <!-- Results -->
+  <div id="results">
+    <hr class="results-divider">
+
+    <!-- Score -->
+    <div class="score-section" id="score-section"></div>
+
+    <!-- Heatmap -->
+    <div class="section-head">CORRELATION MATRIX</div>
+    <div class="section-sub">How much do your holdings move together? Red = same bet. Green = true hedge.</div>
+    <div class="heatmap-wrap" id="heatmap-wrap"></div>
+
+    <!-- Exposure bars -->
+    <div class="section-head">CONCENTRATION RISK</div>
+    <div class="section-sub">What percentage of your portfolio is exposed to each risk factor?</div>
+    <div class="div-bars" id="div-bars"></div>
+
+    <!-- Bucket analysis -->
+    <div class="section-head">CORRELATION CLUSTERS</div>
+    <div class="section-sub">Holdings grouped by how closely they move together.</div>
+    <div class="buckets" id="buckets"></div>
+
+    <!-- Insights -->
+    <div class="section-head">WHAT THIS MEANS FOR YOU</div>
+    <div class="section-sub">Plain English verdict on your portfolio's diversification.</div>
+    <div class="insights" id="insights"></div>
+
+    <button class="btn-reset" onclick="resetAll()">← Analyse another portfolio</button>
+
+    <div class="disclaimer">
+      ⚠ DISCLAIMER: This tool uses historical average correlations between asset classes for educational purposes. Correlations change over time, especially during market crises. This is not financial advice. Moneyhere is a financial education platform — always consult a qualified adviser before making investment decisions.
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// CORRELATION DATA (historical asset class avg)
+// =============================================
+const ASSET_CLASSES = [
+  'US Equities','Intl Equities','Emerging Markets',
+  'US Bonds','Intl Bonds','High Yield Bonds',
+  'Gold','Commodities','Real Estate',
+  'Crypto','Cash'
+];
+
+// Symmetric correlation matrix (upper triangle)
+const CORR = {
+  'US Equities':       {'US Equities':1.00,'Intl Equities':0.87,'Emerging Markets':0.75,'US Bonds':-0.10,'Intl Bonds':0.05,'High Yield Bonds':0.72,'Gold':0.02,'Commodities':0.35,'Real Estate':0.72,'Crypto':0.40,'Cash':-0.05},
+  'Intl Equities':     {'US Equities':0.87,'Intl Equities':1.00,'Emerging Markets':0.82,'US Bonds':-0.08,'Intl Bonds':0.12,'High Yield Bonds':0.68,'Gold':0.05,'Commodities':0.38,'Real Estate':0.65,'Crypto':0.38,'Cash':-0.04},
+  'Emerging Markets':  {'US Equities':0.75,'Intl Equities':0.82,'Emerging Markets':1.00,'US Bonds':-0.05,'Intl Bonds':0.10,'High Yield Bonds':0.65,'Gold':0.10,'Commodities':0.45,'Real Estate':0.60,'Crypto':0.45,'Cash':-0.03},
+  'US Bonds':          {'US Equities':-0.10,'Intl Equities':-0.08,'Emerging Markets':-0.05,'US Bonds':1.00,'Intl Bonds':0.72,'High Yield Bonds':0.28,'Gold':0.22,'Commodities':-0.08,'Real Estate':0.15,'Crypto':-0.05,'Cash':0.55},
+  'Intl Bonds':        {'US Equities':0.05,'Intl Equities':0.12,'Emerging Markets':0.10,'US Bonds':0.72,'Intl Bonds':1.00,'High Yield Bonds':0.35,'Gold':0.18,'Commodities':0.02,'Real Estate':0.18,'Crypto':-0.03,'Cash':0.50},
+  'High Yield Bonds':  {'US Equities':0.72,'Intl Equities':0.68,'Emerging Markets':0.65,'US Bonds':0.28,'Intl Bonds':0.35,'High Yield Bonds':1.00,'Gold':0.08,'Commodities':0.30,'Real Estate':0.62,'Crypto':0.35,'Cash':0.10},
+  'Gold':              {'US Equities':0.02,'Intl Equities':0.05,'Emerging Markets':0.10,'US Bonds':0.22,'Intl Bonds':0.18,'High Yield Bonds':0.08,'Gold':1.00,'Commodities':0.32,'Real Estate':0.05,'Crypto':0.20,'Cash':0.08},
+  'Commodities':       {'US Equities':0.35,'Intl Equities':0.38,'Emerging Markets':0.45,'US Bonds':-0.08,'Intl Bonds':0.02,'High Yield Bonds':0.30,'Gold':0.32,'Commodities':1.00,'Real Estate':0.30,'Crypto':0.25,'Cash':-0.02},
+  'Real Estate':       {'US Equities':0.72,'Intl Equities':0.65,'Emerging Markets':0.60,'US Bonds':0.15,'Intl Bonds':0.18,'High Yield Bonds':0.62,'Gold':0.05,'Commodities':0.30,'Real Estate':1.00,'Crypto':0.30,'Cash':0.05},
+  'Crypto':            {'US Equities':0.40,'Intl Equities':0.38,'Emerging Markets':0.45,'US Bonds':-0.05,'Intl Bonds':-0.03,'High Yield Bonds':0.35,'Gold':0.20,'Commodities':0.25,'Real Estate':0.30,'Crypto':1.00,'Cash':-0.02},
+  'Cash':              {'US Equities':-0.05,'Intl Equities':-0.04,'Emerging Markets':-0.03,'US Bonds':0.55,'Intl Bonds':0.50,'High Yield Bonds':0.10,'Gold':0.08,'Commodities':-0.02,'Real Estate':0.05,'Crypto':-0.02,'Cash':1.00},
+};
+
+// Ticker → asset class auto-map
+const TICKER_MAP = {
+  'AAPL':'US Equities','MSFT':'US Equities','GOOGL':'US Equities','GOOG':'US Equities',
+  'AMZN':'US Equities','META':'US Equities','NVDA':'US Equities','TSLA':'US Equities',
+  'BRK':'US Equities','JPM':'US Equities','JNJ':'US Equities','V':'US Equities',
+  'SPY':'US Equities','VOO':'US Equities','QQQ':'US Equities','IVV':'US Equities',
+  'VTI':'US Equities','DIA':'US Equities','VUG':'US Equities','VTV':'US Equities',
+  'EFA':'Intl Equities','VEA':'Intl Equities','IEFA':'Intl Equities','VEU':'Intl Equities',
+  'EEM':'Emerging Markets','VWO':'Emerging Markets','IEMG':'Emerging Markets',
+  'BND':'US Bonds','AGG':'US Bonds','TLT':'US Bonds','IEF':'US Bonds','SHY':'US Bonds',
+  'BNDX':'Intl Bonds','IAGG':'Intl Bonds',
+  'HYG':'High Yield Bonds','JNK':'High Yield Bonds',
+  'GLD':'Gold','IAU':'Gold','SGOL':'Gold','GOLD':'Gold',
+  'GSG':'Commodities','DJP':'Commodities','PDBC':'Commodities','OIL':'Commodities',
+  'VNQ':'Real Estate','IYR':'Real Estate','REIT':'Real Estate',
+  'BTC':'Crypto','ETH':'Crypto','CRYPTO':'Crypto','COIN':'Crypto',
+  'SHV':'Cash','SGOV':'Cash','BIL':'Cash','VMFXX':'Cash',
+};
+
+const SECTOR_COLORS = {
+  'US Equities':'#e8401c','Intl Equities':'#e86c1c','Emerging Markets':'#e8a81c',
+  'US Bonds':'#1c6be8','Intl Bonds':'#1ca8e8','High Yield Bonds':'#1ce8d4',
+  'Gold':'#c9a227','Commodities':'#8b6914','Real Estate':'#a259e8',
+  'Crypto':'#1ce85a','Cash':'#7a7a7a'
+};
+
+// =============================================
+// STATE
+// =============================================
+let holdings = [];
+let rowId = 0;
+let activeTab = 'form';
+let pastedHoldings = [];
+
+// =============================================
+// TABS
+// =============================================
+function switchTab(tab){
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active', (i===0&&tab==='form')||(i===1&&tab==='paste'));
+  });
+  document.getElementById('section-form').classList.toggle('show', tab==='form');
+  document.getElementById('section-paste').classList.toggle('show', tab==='paste');
+  checkReady();
+}
+
+// =============================================
+// FORM INPUT
+// =============================================
+function addRow(name='', assetClass='US Equities', alloc=''){
+  const id = rowId++;
+  holdings.push({id, name, assetClass, alloc});
+  renderRows();
+}
+
+function removeRow(id){
+  holdings = holdings.filter(h=>h.id!==id);
+  renderRows();
+}
+
+function renderRows(){
+  const container = document.getElementById('form-rows');
+  container.innerHTML = '';
+  holdings.forEach(h=>{
+    const row = document.createElement('div');
+    row.className = 'field-group';
+    row.innerHTML = `
+      <input type="text" placeholder="e.g. AAPL or Apple" value="${h.name}"
+        onchange="updateHolding(${h.id},'name',this.value)"
+        oninput="autoClassify(${h.id},this.value)">
+      <select onchange="updateHolding(${h.id},'assetClass',this.value)" id="class-${h.id}">
+        ${ASSET_CLASSES.map(c=>`<option value="${c}" ${c===h.assetClass?'selected':''}>${c}</option>`).join('')}
+      </select>
+      <input type="number" min="0" max="100" step="0.1" placeholder="%" value="${h.alloc}"
+        onchange="updateHolding(${h.id},'alloc',this.value)"
+        oninput="updateHolding(${h.id},'alloc',this.value)">
+      <button class="del-btn" onclick="removeRow(${h.id})">×</button>
+    `;
+    container.appendChild(row);
+  });
+  updateAllocBar();
+  checkReady();
+}
+
+function autoClassify(id, val){
+  const upper = val.toUpperCase().trim();
+  const mapped = TICKER_MAP[upper];
+  if(mapped){
+    updateHolding(id,'assetClass',mapped);
+    const sel = document.getElementById('class-'+id);
+    if(sel) sel.value = mapped;
+  }
+  updateHolding(id,'name',val);
+}
+
+function updateHolding(id, field, value){
+  const h = holdings.find(h=>h.id===id);
+  if(h) h[field] = value;
+  updateAllocBar();
+  checkReady();
+}
+
+function updateAllocBar(){
+  const total = holdings.reduce((s,h)=>s+(parseFloat(h.alloc)||0),0);
+  const track = document.getElementById('alloc-track');
+  const totalEl = document.getElementById('alloc-total');
+  const labelsEl = document.getElementById('alloc-labels');
+
+  track.innerHTML = holdings.map(h=>{
+    const pct = Math.min(parseFloat(h.alloc)||0, 100);
+    const col = SECTOR_COLORS[h.assetClass]||'#999';
+    return `<div style="width:${pct}%;background:${col};height:100%;transition:width 0.3s"></div>`;
+  }).join('');
+
+  totalEl.textContent = total.toFixed(1)+'%';
+  totalEl.className = 'alloc-total '+(Math.abs(total-100)<0.5?'ok':total>100?'over':'under');
+
+  labelsEl.innerHTML = holdings.filter(h=>parseFloat(h.alloc)>0).map(h=>{
+    const col = SECTOR_COLORS[h.assetClass]||'#999';
+    return `<span style="color:${col};margin-right:8px">${h.name||h.assetClass} ${h.alloc}%</span>`;
+  }).join('');
+}
+
+// =============================================
+// PASTE INPUT
+// =============================================
+const SAMPLES = {
+  tech:`AAPL, US Equities, 25\nNVDA, US Equities, 20\nMSFT, US Equities, 20\nGOOGL, US Equities, 15\nTSLA, US Equities, 10\nCOIN, Crypto, 10`,
+  balanced:`SPY, US Equities, 40\nEFA, Intl Equities, 20\nBND, US Bonds, 25\nGLD, Gold, 10\nVNQ, Real Estate, 5`,
+  crypto:`BTC, Crypto, 40\nETH, Crypto, 25\nNVDA, US Equities, 15\nGLD, Gold, 10\nCash, Cash, 10`,
+  global:`SPY, US Equities, 25\nEFA, Intl Equities, 20\nEEM, Emerging Markets, 15\nBND, US Bonds, 15\nGLD, Gold, 10\nGSG, Commodities, 8\nCash, Cash, 7`
+};
+
+function loadSample(key){
+  document.getElementById('paste-input').value = SAMPLES[key];
+  parsePaste();
+}
+
+function parsePaste(){
+  const raw = document.getElementById('paste-input').value;
+  const lines = raw.trim().split('\n').filter(l=>l.trim());
+  pastedHoldings = [];
+  let errors = 0;
+
+  lines.forEach(line=>{
+    const parts = line.split(',').map(p=>p.trim());
+    let name='', assetClass='US Equities', alloc=0;
+
+    if(parts.length>=3){
+      name = parts[0];
+      assetClass = matchAssetClass(parts[1]) || 'US Equities';
+      alloc = parseFloat(parts[2].replace('%',''))||0;
+    } else if(parts.length===2){
+      name = parts[0];
+      alloc = parseFloat(parts[1].replace('%',''))||0;
+      assetClass = TICKER_MAP[name.toUpperCase()] || 'US Equities';
+    } else {
+      const m = line.match(/^([A-Za-z\s]+)\s+([\d.]+)%?$/);
+      if(m){
+        name = m[1].trim();
+        alloc = parseFloat(m[2])||0;
+        assetClass = TICKER_MAP[name.toUpperCase()] || 'US Equities';
+      } else errors++;
+    }
+
+    if(name && alloc>0) pastedHoldings.push({name, assetClass, alloc});
+  });
+
+  const total = pastedHoldings.reduce((s,h)=>s+h.alloc,0);
+  const status = document.getElementById('paste-status');
+  if(pastedHoldings.length>0){
+    status.innerHTML = `✓ ${pastedHoldings.length} holdings parsed · Total: <span style="color:${Math.abs(total-100)<0.5?'var(--green)':'var(--red)'}">${total.toFixed(1)}%</span>${errors>0?` · ${errors} lines skipped`:''}`;
+  } else {
+    status.textContent = 'No valid holdings found yet.';
+  }
+  checkReady();
+}
+
+function matchAssetClass(str){
+  const s = str.toLowerCase();
+  for(const ac of ASSET_CLASSES){
+    if(ac.toLowerCase().includes(s) || s.includes(ac.toLowerCase().split(' ')[0])) return ac;
+  }
+  return null;
+}
+
+// =============================================
+// READY CHECK
+// =============================================
+function checkReady(){
+  let ready = false;
+  if(activeTab==='form'){
+    const total = holdings.reduce((s,h)=>s+(parseFloat(h.alloc)||0),0);
+    ready = holdings.length>=2 && Math.abs(total-100)<1;
+  } else {
+    const total = pastedHoldings.reduce((s,h)=>s+h.alloc,0);
+    ready = pastedHoldings.length>=2 && Math.abs(total-100)<2;
+  }
+  document.getElementById('analyse-btn').disabled = !ready;
+}
+
+// =============================================
+// ANALYSIS ENGINE
+// =============================================
+function runAnalysis(){
+  const raw = activeTab==='form'
+    ? holdings.map(h=>({name:h.name||h.assetClass, assetClass:h.assetClass, alloc:parseFloat(h.alloc)||0}))
+    : pastedHoldings;
+
+  const portfolio = raw.filter(h=>h.alloc>0);
+
+  // Normalise allocations
+  const totalAlloc = portfolio.reduce((s,h)=>s+h.alloc,0);
+  portfolio.forEach(h=>h.weight = h.alloc/totalAlloc);
+
+  // Compute weighted portfolio correlation
+  let weightedAvgCorr = 0;
+  let pairCount = 0;
+  for(let i=0;i<portfolio.length;i++){
+    for(let j=i+1;j<portfolio.length;j++){
+      const corr = getCorr(portfolio[i].assetClass, portfolio[j].assetClass);
+      weightedAvgCorr += corr * portfolio[i].weight * portfolio[j].weight;
+      pairCount++;
+    }
+  }
+
+  // Diversification score (0-100, higher = better)
+  // Based on average pairwise correlation — lower corr = more diversified
+  const avgPairCorr = pairCount > 0 ? portfolio.reduce((sum,a,i)=>{
+    let rowSum = 0;
+    portfolio.forEach((b,j)=>{ if(i!==j) rowSum += getCorr(a.assetClass,b.assetClass); });
+    return sum + (rowSum/(portfolio.length-1)) * a.weight;
+  }, 0) : 0;
+
+  const score = Math.round(Math.max(0, Math.min(100, (1 - avgPairCorr) * 100)));
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').classList.add('show');
+
+  renderScore(score, portfolio);
+  renderHeatmap(portfolio);
+  renderConcentrationBars(portfolio);
+  renderBuckets(portfolio);
+  renderInsights(score, portfolio, avgPairCorr);
+
+  setTimeout(()=>{
+    document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  }, 100);
+}
+
+function getCorr(a, b){
+  if(!CORR[a]||!CORR[a][b]) return 0.5;
+  return CORR[a][b];
+}
+
+// =============================================
+// RENDER SCORE
+// =============================================
+function renderScore(score, portfolio){
+  const color = score>=70?'var(--green)':score>=45?'var(--yellow)':'var(--red)';
+  const label = score>=70?'WELL DIVERSIFIED':score>=45?'PARTIALLY DIVERSIFIED':'CONCENTRATED PORTFOLIO';
+  const verdict = score>=70
+    ? `Your portfolio shows genuine diversification across multiple uncorrelated asset classes. You have real protection when one market segment sells off.`
+    : score>=45
+    ? `Your portfolio has some diversification but significant concentration risk remains. Several of your holdings tend to move together, which amplifies losses during downturns.`
+    : `Your portfolio is heavily concentrated. Most of your holdings are highly correlated — meaning when one falls, they likely all fall. You may think you're diversified, but you're essentially making one big bet.`;
+
+  // Asset class exposure tags
+  const classExposure = {};
+  portfolio.forEach(h=>{
+    classExposure[h.assetClass] = (classExposure[h.assetClass]||0) + h.weight*100;
+  });
+
+  const topExposures = Object.entries(classExposure).sort((a,b)=>b[1]-a[1]).slice(0,4);
+
+  const circumference = 2 * Math.PI * 54;
+  const dashOffset = circumference * (1 - score/100);
+
+  document.getElementById('score-section').innerHTML = `
+    <div class="score-ring-wrap">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="${'#e0dbd2'}" stroke-width="8"/>
+        <circle cx="60" cy="60" r="54" fill="none" stroke="${color}" stroke-width="8"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"
+          stroke-linecap="round" style="transition:stroke-dashoffset 1s ease"/>
+      </svg>
+      <div class="score-number">
+        <div class="score-num" style="color:${color}">${score}</div>
+        <div class="score-label">/ 100</div>
+      </div>
+    </div>
+    <div class="score-text">
+      <h2>${label}</h2>
+      <p>${verdict}</p>
+      <div class="risk-tags">
+        ${topExposures.map(([cls, pct])=>{
+          const type = pct>40?'red':pct>20?'yellow':'green';
+          return `<span class="risk-tag ${type}">${cls}: ${pct.toFixed(0)}%</span>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// =============================================
+// RENDER HEATMAP
+// =============================================
+function renderHeatmap(portfolio){
+  const n = portfolio.length;
+  let html = `<table class="heatmap-table"><thead><tr><th class="row-head"></th>`;
+  portfolio.forEach(h=>{
+    const short = h.name.length>8 ? h.name.substring(0,7)+'…' : h.name;
+    html += `<th title="${h.name}">${short}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  portfolio.forEach((a,i)=>{
+    html += `<tr><td class="row-label">${a.name}</td>`;
+    portfolio.forEach((b,j)=>{
+      const corr = getCorr(a.assetClass, b.assetClass);
+      const bg = corrToColor(corr);
+      const textColor = corr > 0.5 ? '#fff' : corr < -0.1 ? '#fff' : '#333';
+      const display = i===j ? '—' : corr.toFixed(2);
+      html += `<td style="background:${bg};color:${textColor}" title="${a.name} vs ${b.name}: ${corr.toFixed(2)}">${display}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += `</tbody></table>
+    <div class="heatmap-legend">
+      <span>Low corr (good)</span>
+      <div class="legend-grad"></div>
+      <span>High corr (risky)</span>
+    </div>`;
+
+  document.getElementById('heatmap-wrap').innerHTML = html;
+}
+
+function corrToColor(c){
+  if(c >= 1) return '#e8401c';
+  if(c >= 0.8) return '#e86030';
+  if(c >= 0.6) return '#f59460';
+  if(c >= 0.4) return '#f8c4a0';
+  if(c >= 0.2) return '#f5ede4';
+  if(c >= 0.0) return '#f5f2ec';
+  if(c >= -0.1) return '#daeef0';
+  return '#1a9c5b';
+}
+
+// =============================================
+// CONCENTRATION BARS
+// =============================================
+function renderConcentrationBars(portfolio){
+  const classExp = {};
+  portfolio.forEach(h=>{
+    classExp[h.assetClass] = (classExp[h.assetClass]||0) + h.weight*100;
+  });
+
+  const sorted = Object.entries(classExp).sort((a,b)=>b[1]-a[1]);
+  const html = sorted.map(([cls, pct])=>{
+    const col = SECTOR_COLORS[cls]||'#999';
+    const rounded = pct.toFixed(1);
+    return `
+      <div class="div-bar-row">
+        <div class="div-bar-label">${cls}</div>
+        <div class="div-bar-track">
+          <div class="div-bar-fill" style="width:${pct}%;background:${col}">${rounded}%</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('div-bars').innerHTML = html;
+}
+
+// =============================================
+// BUCKET ANALYSIS
+// =============================================
+function renderBuckets(portfolio){
+  // Group assets by average correlation to rest
+  const groups = { high: [], med: [], low: [] };
+
+  portfolio.forEach(a=>{
+    const others = portfolio.filter(b=>b!==a);
+    const avg = others.length
+      ? others.reduce((s,b)=>s+getCorr(a.assetClass,b.assetClass),0)/others.length
+      : 0;
+    a._avgCorr = avg;
+    if(avg>0.6) groups.high.push(a);
+    else if(avg>0.3) groups.med.push(a);
+    else groups.low.push(a);
+  });
+
+  const cards = [
+    { key:'high', title:'HIGH CORRELATION', sub:'Move together', cls:'high-corr', icon:'🔴', items: groups.high },
+    { key:'med',  title:'MEDIUM CORRELATION', sub:'Some overlap', cls:'med-corr',  icon:'🟡', items: groups.med  },
+    { key:'low',  title:'LOW CORRELATION', sub:'True diversifiers', cls:'low-corr', icon:'🟢', items: groups.low  },
+  ].filter(g=>g.items.length>0);
+
+  document.getElementById('buckets').innerHTML = cards.map(g=>`
+    <div class="bucket-card ${g.cls}">
+      <div class="bucket-title">${g.icon} ${g.title}</div>
+      <div class="bucket-count">${g.items.length} holding${g.items.length!==1?'s':''} · ${g.sub}</div>
+      <div class="bucket-items">
+        ${g.items.map(h=>`
+          <div class="bucket-item">
+            <div class="bucket-dot" style="background:${SECTOR_COLORS[h.assetClass]||'#999'}"></div>
+            <span>${h.name} <span style="color:var(--ink3);font-size:11px">(${(h.weight*100).toFixed(0)}%)</span></span>
+          </div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// =============================================
+// INSIGHTS
+// =============================================
+function renderInsights(score, portfolio, avgCorr){
+  const insights = [];
+
+  // Class concentration check
+  const classExp = {};
+  portfolio.forEach(h=>{ classExp[h.assetClass] = (classExp[h.assetClass]||0) + h.weight*100; });
+  const topClass = Object.entries(classExp).sort((a,b)=>b[1]-a[1])[0];
+
+  if(topClass[1]>60){
+    insights.push({type:'bad', icon:'⚠️', title:`${topClass[1].toFixed(0)}% in ${topClass[0]} — that's a single-bet risk`, text:`Over half your portfolio is in one asset class. If ${topClass[0]} sells off hard, your entire portfolio takes the hit regardless of how many tickers you hold within it.`});
+  }
+
+  // US Equity heavy check
+  const usEqPct = classExp['US Equities']||0;
+  if(usEqPct>50){
+    insights.push({type:'bad', icon:'🇺🇸', title:`Heavy US equity concentration (${usEqPct.toFixed(0)}%)`, text:`Most of your wealth moves with US market sentiment. Consider adding international equities, bonds, or real assets to reduce your exposure to a single geography and risk factor.`});
+  }
+
+  // Crypto check
+  const cryptoPct = classExp['Crypto']||0;
+  if(cryptoPct>25){
+    insights.push({type:'warn', icon:'₿', title:`Crypto at ${cryptoPct.toFixed(0)}% — high volatility weight`, text:`Crypto has a relatively low correlation to traditional assets on average, which can help diversification. But its extreme volatility means it can dominate your portfolio's daily moves. Most risk frameworks suggest keeping crypto below 10–15%.`});
+  }
+
+  // Gold / bonds check
+  const goldPct = classExp['Gold']||0;
+  const bondPct = (classExp['US Bonds']||0)+(classExp['Intl Bonds']||0);
+  if(goldPct===0 && bondPct===0 && score<60){
+    insights.push({type:'warn', icon:'🥇', title:`No defensive assets — nothing to hedge a crash`, text:`You have no Gold or Bonds in your portfolio. These are historically your best protection when equities sell off hard. Even a 10–15% allocation to Treasuries or gold can significantly reduce drawdown risk.`});
+  }
+
+  // Good diversification
+  const uniqueClasses = Object.keys(classExp).length;
+  if(uniqueClasses>=4 && score>=60){
+    insights.push({type:'good', icon:'✅', title:`${uniqueClasses} asset classes — genuine spread`, text:`Your portfolio spans multiple asset classes with different return drivers. This means not every holding will fall simultaneously in a market shock. That's real diversification, not just owning more tickers.`});
+  }
+
+  // Low corr assets present
+  const hasGold = goldPct>0;
+  const hasBonds = bondPct>0;
+  if(hasGold && hasBonds){
+    insights.push({type:'good', icon:'🛡️', title:`Gold + Bonds = built-in shock absorbers`, text:`You hold both gold and bonds, which historically move opposite to equities during crises. During the 2008 crash, Treasuries surged while stocks fell 50%. This combination gives your portfolio real downside protection.`});
+  }
+
+  // Many tickers, few classes
+  const sameClassPairs = portfolio.filter(h=>classExp[h.assetClass]>30 && h.weight*100<classExp[h.assetClass]-5);
+  if(sameClassPairs.length>2){
+    insights.push({type:'warn', icon:'🎭', title:`Multiple tickers, same risk factor`, text:`You hold several assets that belong to the same asset class. Owning AAPL, MSFT, and NVDA feels like diversification but they all respond to the same macro forces — US tech sentiment, Fed policy, risk appetite. You need different asset classes, not just different names.`});
+  }
+
+  if(insights.length===0){
+    insights.push({type:'good', icon:'🎯', title:`Solid portfolio structure`, text:`Your holdings appear to be spread across genuinely uncorrelated asset classes. Keep monitoring this as market correlations can spike during crises — assets that normally move independently can become highly correlated when panic sets in.`});
+  }
+
+  document.getElementById('insights').innerHTML = insights.map(ins=>`
+    <div class="insight-card ${ins.type}">
+      <div class="insight-icon">${ins.icon}</div>
+      <div class="insight-text">
+        <strong>${ins.title}</strong>
+        <p>${ins.text}</p>
+      </div>
+    </div>`).join('');
+}
+
+// =============================================
+// RESET
+// =============================================
+function resetAll(){
+  holdings=[];rowId=0;pastedHoldings=[];
+  renderRows();
+  document.getElementById('paste-input').value='';
+  document.getElementById('paste-status').textContent='';
+  document.getElementById('results').style.display='none';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('analyse-btn').disabled=true;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// =============================================
+// INIT
+// =============================================
+window.onload = ()=>{
+  addRow('AAPL','US Equities',40);
+  addRow('NVDA','US Equities',30);
+  addRow('BND','US Bonds',20);
+  addRow('GLD','Gold',10);
+};
+</script>
+</body>
+</html>
